@@ -17,7 +17,7 @@ const CinemaSchema = new Schema ({
     location:{
         type: Schema.Types.Mixed
     },
-    film:{
+    films:{
         type: [String],
         default: []
     }

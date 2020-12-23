@@ -118,14 +118,44 @@ bot.on('callback_query', query => {
     const { type } = data
 
     if (type === ACTION_TYPE.SHOW_CINEMAS_MAP){
-
+        const {lat,  lon} = data
+        bot.sendLocation(query.message.chat.id, lat, lon)
     } else if (type === ACTION_TYPE.SHOW_CINEMAS){
         sendCinemasByQuery(userId, {uuid: {'$in': data.cinemaUuids}})
     } else if (type === ACTION_TYPE.TOGGLE_FAV_FILM){
         toggleFavoriteFilm(userId, query.id, data)
     } else if (type === ACTION_TYPE.SHOW_FILMS){
-        
+        sendFilmsByQuery(userId, {uuid: {'$in': data.filmUuids}})
     }
+})
+
+bot.on('inline_query', query =>{
+    Film.find({}).then(films =>{
+        const results = films.map(f =>{
+            const caption = `Name: ${f.name}\nYear: ${f.year}\nRate: ${f.rate}\nLength: ${f.length}\nCountry: ${f.country}`
+            return {
+                id: f.uuid,
+                type: 'photo',
+                photo_url: f.picture,
+                thumb_url: f.picture,
+                capiton: caption,
+                reply_markup:{
+                    inline_keyboard:[
+                        [
+                            {
+                                text: `Kinopoisk ${f.name}`,
+                                url: f.link
+                            }
+                        ]
+                    ]
+                }
+            }
+        })
+
+        bot.answerInlineQuery(query.id, results, {
+            cache_time: 0
+        })
+    })
 })
 
 bot.onText(/\/f(.+)/, (msg, [source, match]) => {

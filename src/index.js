@@ -57,7 +57,7 @@ bot.on('message', msg =>{
             showFavoriteFilms(chatId, msg.from.id)
          break
         case kb.home.films:
-            bot.sendMessage(chatId, 'Choose genre:',
+            bot.sendMessage(chatId, 'Выберите жанр:',
             {
                 reply_markup: { keyboard: myKeyboard.films}
             })
@@ -72,14 +72,14 @@ bot.on('message', msg =>{
             sendFilmsByQuery(chatId, {})
             break
         case kb.home.cinemas:
-            bot.sendMessage(chatId, 'Give location',{
+            bot.sendMessage(chatId, 'Разрешите доступ к местоположению',{
                 reply_markup: {
                     keyboard: myKeyboard.cinemas
                 }
             })
             break
         case kb.back:
-            bot.sendMessage(chatId, 'What do you prefer?',
+            bot.sendMessage(chatId, 'Что предпочтете посмотреть?',
             {
                 reply_markup:{
 
@@ -88,15 +88,14 @@ bot.on('message', msg =>{
             })
         break
 }
-    if(msg.location){
-        console.log(msg.location); 
+    if(msg.location){ 
         getCinemasInCoord(chatId, msg.location)
     }
 
 })
 
 bot.onText(/\/start/, msg =>{
-    const text = `Hello, ${msg.from.first_name}\nSelect a command to get started.. `
+    const text = `Hello, ${msg.from.first_name}\nВыберите команду, чтобы начать :) `
     bot.sendMessage(helpers.getChatId(msg),text,{
         reply_markup:{
            keyboard: myKeyboard.home
@@ -132,7 +131,7 @@ bot.on('callback_query', query => {
 bot.on('inline_query', query =>{
     Film.find({}).then(films =>{
         const results = films.map(f =>{
-            const caption = `Name: ${f.name}\nYear: ${f.year}\nRate: ${f.rate}\nLength: ${f.length}\nCountry: ${f.country}`
+            const caption = `Название: ${f.name}\nГод: ${f.year}\nРейтинг: ${f.rate}\nДлительность: ${f.length}\nСтрана: ${f.country}`
             return {
                 id: f.uuid,
                 type: 'photo',
@@ -143,7 +142,7 @@ bot.on('inline_query', query =>{
                     inline_keyboard:[
                         [
                             {
-                                text: `Kinopoisk ${f.name}`,
+                                text: `IMDb ${f.name}`,
                                 url: f.link
                             }
                         ]
@@ -175,9 +174,9 @@ bot.onText(/\/f(.+)/, (msg, [source, match]) => {
             isFav = user.films.indexOf(film.uuid) !== -1
         }
 
-        const favText = isFav ? 'Dlete from favorite' : 'Add to favorite'
+        const favText = isFav ? 'Удалить из избранного' : 'Добавить в избранное'
 
-        const caption = `Name: ${film.name}\nYear: ${film.year}\nRate: ${film.rate}\nLength: ${film.length}\nCountry: ${film.country}`
+        const caption = `Название: ${film.name}\nГод: ${film.year}\nРейтинг: ${film.rate}\nДлительность: ${film.length}\nСтрана: ${film.country}`
        
         bot.sendPhoto(chatId, film.picture,{
            caption: caption,
@@ -193,7 +192,7 @@ bot.onText(/\/f(.+)/, (msg, [source, match]) => {
                         })
                     },
                     {
-                        text: 'Show cinemas',
+                        text: 'Показать кинотеатры',
                         callback_data: JSON.stringify({
                             type: ACTION_TYPE.SHOW_CINEMAS,
                             cinemaUuids: film.cinemas
@@ -202,7 +201,7 @@ bot.onText(/\/f(.+)/, (msg, [source, match]) => {
                    ],
                    [
                     {
-                        text: `Kinopoisk ${film.name}`,
+                        text: `IMDb ${film.name}`,
                         url: film.link
                     }
                    ]
@@ -218,7 +217,7 @@ bot.onText(/\/c(.+)/,(msg, [source, match]) => {
 
     Cinema.findOne({uuid:cinemaUuid}).then(cinema => {
 
-        bot.sendMessage(chatId, `Cinema ${cinema.name}`, {
+        bot.sendMessage(chatId, `Кинотеатр ${cinema.name}`, {
             reply_markup: {
                 inline_keyboard: [
                     [
@@ -227,7 +226,7 @@ bot.onText(/\/c(.+)/,(msg, [source, match]) => {
                          url: cinema.url
                      },
                      {
-                         text: 'Show on the map',
+                         text: 'Показать на карте',
                          callback_data: JSON.stringify({
                              type: ACTION_TYPE.SHOW_CINEMAS_MAP,
                              lat: cinema.location.latitude,
@@ -237,7 +236,7 @@ bot.onText(/\/c(.+)/,(msg, [source, match]) => {
                     ],
                     [
                      { 
-                         text: 'Show movies',
+                         text: 'Показать фильмы',
                          callback_data: JSON.stringify({
                              type: ACTION_TYPE.SHOW_FILMS,
                              filmUuids: cinema.films
@@ -290,7 +289,7 @@ function sendFilmsByQuery(chatId, query){
         cinemas = _.sortBy(cinemas, 'distance')
         
         const html = cinemas.map((c,i) => {
-            return `<b>${i + 1}</b> ${c.name}. <em>Distance</em> - <strong>${c.distance}</strong> km. /c${c.uuid}`
+            return `<b>${i + 1}</b> ${c.name}. <em>Расстояние от вас</em> - <strong>${c.distance}</strong> km. /c${c.uuid}`
         }).join('\n')
 
         sendHTML(chatId, html, 'home')
@@ -316,7 +315,7 @@ let userPromise
             })
         }
 
-        const answerText = isFav ? 'Deleted' : 'Added'
+        const answerText = isFav ? 'Удалено' : 'Добавлено'
 
         userPromise.save().then(_ =>{
             bot.answerCallbackQuery ({
@@ -341,13 +340,13 @@ let userPromise
                         return `<b>${i + 1}</b> ${f.name} - <b>${f.rate}</b> (/f${f.uuid})` 
                     }).join('\n')
                 } else {
-                    html = 'Not added yet'
+                    html = 'Пока еще ничего не добавлено'
                 }
 
                 sendHTML(chatId,html, 'home')
             })
         } else {
-            sendHTML (chatId, 'Not added yet', 'home')
+            sendHTML (chatId, 'Пока еще ничего не добавлено', 'home')
         }
      })
  }

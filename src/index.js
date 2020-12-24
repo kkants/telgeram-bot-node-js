@@ -1,9 +1,9 @@
+//const dotenv =require('dotenv').config()
 const TelegramBot = require('node-telegram-bot-api')
 const mongoose = require ('mongoose')
 const helpers = require('./helpers')
 const geolib = require('geolib')
 const _ = require('lodash')
-const config = require('./config')
 const kb = require('./keyboard-buttons')
 const myKeyboard = require('./myKeyboard')
 const database = require('../database.json')
@@ -11,6 +11,7 @@ const fs= require('fs')
 const { url } = require('inspector')
 const { send } = require('process')
 const {join} = require('path')
+const config = require('./config')
 
 helpers.logStart()
 
@@ -43,7 +44,7 @@ const ACTION_TYPE = {
 }
 
 // =====================================================
-const bot = new TelegramBot (config.TOKEN, {
+const bot = new TelegramBot (config.BOT_TOKEN, {
     polling: true
     
 })

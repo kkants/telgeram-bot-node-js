@@ -338,7 +338,7 @@ let userPromise
 
                 if(films.length) {
                     html = films.map((f, i) =>{
-                        return `<b>${i + 1}</b> ${f.name} - <b>${f.rate}</b> (/f${f.uuid})` 
+                        return `<b>${i + 1}</b> ${f.name} - <b>Рейтинг у фильма на IMDb: ${f.rate}</b> (/f${f.uuid})` 
                     }).join('\n')
                 } else {
                     html = 'Пока еще ничего не добавлено'

@@ -1,4 +1,5 @@
-//const dotenv =require('dotenv').config()
+require('dotenv').config()
+
 const TelegramBot = require('node-telegram-bot-api')
 const mongoose = require ('mongoose')
 const helpers = require('./helpers')
@@ -8,14 +9,11 @@ const kb = require('./keyboard-buttons')
 const myKeyboard = require('./myKeyboard')
 const database = require('../database.json')
 const fs= require('fs')
-const { url } = require('inspector')
-const { send } = require('process')
-const {join} = require('path')
-const config = require('./config')
+
 
 helpers.logStart()
 
-mongoose.connect(config.DB_URL,{
+mongoose.connect(process.env.DB_URL,{
      useNewUrlParser: true,
      useUnifiedTopology: true
  })
@@ -44,7 +42,7 @@ const ACTION_TYPE = {
 }
 
 // =====================================================
-const bot = new TelegramBot (config.BOT_TOKEN, {
+const bot = new TelegramBot (process.env.BOT_TOKEN, {
     polling: true
     
 })

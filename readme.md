@@ -1,2 +1,2 @@
 # git and github 
-yoyo
+bot check
